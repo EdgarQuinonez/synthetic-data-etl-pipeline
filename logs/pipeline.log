@@ -1,0 +1,69 @@
+[2026-08-22 12:32:23] === synthetic-data-etl-pipeline startup check ===
+[2026-08-22 12:32:24] OK   gcloud project (data-etl-pipeline-506215)
+[2026-08-22 12:32:25] ingress external IP: 136.65.109.103
+[2026-08-22 12:32:25] Cloud SQL not RUNNABLE (state=), activating
+[2026-08-22 12:33:02] FAIL Cloud SQL data-etl-pipeline-506215:us-central1:synthetic-postgres (state=)
+[2026-08-22 12:33:02] OK   cloud-sql-proxy (port 5432)
+[2026-08-22 12:33:02] OK   NiFi (web 8443, ListenHTTP 19090)
+[2026-08-22 12:33:04] starting reverse tunnel to glowbo@136.65.109.103
+[2026-08-22 12:33:06] OK   reverse tunnel (started)
+[2026-08-22 12:33:08] OK   nginx on nginx-ingress
+[2026-08-22 12:33:11] OK   source services on synthetic-data-gen
+[2026-08-22 12:33:11] OK   e2e probe (nginx->tunnel->NiFi, HTTP 200)
+[2026-08-22 12:33:11] skip DB row check (set PGPASSWORD to verify the probe row)
+[2026-08-22 12:33:11] === summary ===
+[2026-08-22 12:33:11] failed: Cloud SQL data-etl-pipeline-506215:us-central1:synthetic-postgres (state=)
+[2026-08-22 12:33:25] === synthetic-data-etl-pipeline startup check ===
+[2026-08-22 12:33:25] OK   gcloud project (data-etl-pipeline-506215)
+[2026-08-22 12:33:26] ingress external IP: 136.65.109.103
+[2026-08-22 12:33:27] OK   Cloud SQL synthetic-postgres (RUNNABLE)
+[2026-08-22 12:33:27] OK   cloud-sql-proxy (port 5432)
+[2026-08-22 12:33:27] OK   NiFi (web 8443, ListenHTTP 19090)
+[2026-08-22 12:33:29] starting reverse tunnel to glowbo@136.65.109.103
+[2026-08-22 12:33:32] OK   reverse tunnel (started)
+[2026-08-22 12:33:34] OK   nginx on nginx-ingress
+[2026-08-22 12:33:36] OK   source services on synthetic-data-gen
+[2026-08-22 12:33:36] OK   e2e probe (nginx->tunnel->NiFi, HTTP 200)
+[2026-08-22 12:33:36] skip DB row check (set PGPASSWORD to verify the probe row)
+[2026-08-22 12:33:36] === summary ===
+[2026-08-22 12:33:36] all components OK
+[2026-08-22 12:33:40] === synthetic-data-etl-pipeline startup check ===
+[2026-08-22 12:33:40] OK   gcloud project (data-etl-pipeline-506215)
+[2026-08-22 12:33:42] ingress external IP: 136.65.109.103
+[2026-08-22 12:33:42] OK   Cloud SQL synthetic-postgres (RUNNABLE)
+[2026-08-22 12:33:42] OK   cloud-sql-proxy (port 5432)
+[2026-08-22 12:33:42] OK   NiFi (web 8443, ListenHTTP 19090)
+[2026-08-22 12:33:44] starting reverse tunnel to glowbo@136.65.109.103
+[2026-08-22 12:33:47] OK   reverse tunnel (started)
+[2026-08-22 12:33:51] OK   nginx on nginx-ingress
+[2026-08-22 12:33:53] OK   source services on synthetic-data-gen
+[2026-08-22 12:33:53] OK   e2e probe (nginx->tunnel->NiFi, HTTP 200)
+[2026-08-22 12:33:53] skip DB row check (set PGPASSWORD to verify the probe row)
+[2026-08-22 12:33:53] === summary ===
+[2026-08-22 12:33:53] all components OK
+[2026-08-22 12:34:14] === synthetic-data-etl-pipeline startup check ===
+[2026-08-22 12:34:14] OK   gcloud project (data-etl-pipeline-506215)
+[2026-08-22 12:34:15] ingress external IP: 136.65.109.103
+[2026-08-22 12:34:16] OK   Cloud SQL synthetic-postgres (RUNNABLE)
+[2026-08-22 12:34:16] OK   cloud-sql-proxy (port 5432)
+[2026-08-22 12:34:16] OK   NiFi (web 8443, ListenHTTP 19090)
+[2026-08-22 12:34:19] OK   reverse tunnel (glowbo@136.65.109.103)
+[2026-08-22 12:34:21] OK   nginx on nginx-ingress
+[2026-08-22 12:34:24] OK   source services on synthetic-data-gen
+[2026-08-22 12:34:24] OK   e2e probe (nginx->tunnel->NiFi, HTTP 200)
+[2026-08-22 12:34:24] skip DB row check (set PGPASSWORD to verify the probe row)
+[2026-08-22 12:34:24] === summary ===
+[2026-08-22 12:34:24] all components OK
+[2026-08-22 12:34:31] === synthetic-data-etl-pipeline startup check ===
+[2026-08-22 12:34:31] OK   gcloud project (data-etl-pipeline-506215)
+[2026-08-22 12:34:32] ingress external IP: 136.65.109.103
+[2026-08-22 12:34:33] OK   Cloud SQL synthetic-postgres (RUNNABLE)
+[2026-08-22 12:34:33] OK   cloud-sql-proxy (port 5432)
+[2026-08-22 12:34:33] OK   NiFi (web 8443, ListenHTTP 19090)
+[2026-08-22 12:34:36] OK   reverse tunnel (glowbo@136.65.109.103)
+[2026-08-22 12:34:38] OK   nginx on nginx-ingress
+[2026-08-22 12:34:40] OK   source services on synthetic-data-gen
+[2026-08-22 12:34:40] OK   e2e probe (nginx->tunnel->NiFi, HTTP 200)
+[2026-08-22 12:34:40] skip DB row check (set PGPASSWORD to verify the probe row)
+[2026-08-22 12:34:40] === summary ===
+[2026-08-22 12:34:40] all components OK
