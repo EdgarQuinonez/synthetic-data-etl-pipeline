@@ -2,3 +2,5 @@
 __pycache__
 graphify-out
 /.ai
+nifi/data
+nifi/credentials.txt

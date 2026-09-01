@@ -19,7 +19,7 @@ SQL_PROXY_BIN="/home/glowbo/bin/cloud-sql-proxy"
 SQL_PROXY_SA="/home/glowbo/.config/gcloud/sql-proxy-sa.json"
 SQL_PROXY_PORT="5432"
 SQL_PROXY_INSTANCE="$PROJECT:$SQL_REGION:$SQL_INSTANCE_NAME"
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="/home/glowbo/projects/dev-logs/synthetic-data-etl-pipeline/logs"
 PID_DIR="$LOG_DIR/run"
 PIPELINE_LOG="$LOG_DIR/pipeline.log"
@@ -235,7 +235,7 @@ ensure_nginx_vm() {
     --image-family=debian-12 \
     --image-project=debian-cloud \
     --tags=http-ingress \
-    --metadata-from-file=startup-script="$REPO_DIR/nginx-ingress/startup.sh" >/dev/null 2>&1
+    --metadata-from-file=startup-script="$REPO_DIR/gcp/vms/nginx-ingress/startup.sh" >/dev/null 2>&1
   if gcloud compute instances describe "$INGRESS_VM" --zone "$ZONE" >/dev/null 2>&1; then
     record "VM $INGRESS_VM (created)" ok
     return 0
@@ -255,7 +255,7 @@ ensure_source_vm() {
     --machine-type=e2-micro \
     --image-family=debian-12 \
     --image-project=debian-cloud \
-    --metadata-from-file=startup-script="$REPO_DIR/random-synthetic-data-generator/startup.sh" >/dev/null 2>&1
+    --metadata-from-file=startup-script="$REPO_DIR/gcp/vms/random-synthetic-data-generator/startup.sh" >/dev/null 2>&1
   if gcloud compute instances describe "$SOURCE_VM" --zone "$ZONE" >/dev/null 2>&1; then
     record "VM $SOURCE_VM (created)" ok
     return 0

@@ -7,7 +7,6 @@ SOURCE_VM="synthetic-data-gen"
 INGRESS_VM="nginx-ingress"
 SQL_INSTANCE_NAME="synthetic-postgres"
 SQL_PROXY_INSTANCE="data-etl-pipeline-506215:us-central1:synthetic-postgres"
-NIFI_HOME="/opt/nifi"
 NIFI_WEB_PORT="8443"
 NIFI_HTTP_PORT="19090"
 SQL_PROXY_BIN="/home/glowbo/bin/cloud-sql-proxy"
@@ -15,7 +14,9 @@ SQL_PROXY_SA="/home/glowbo/.config/gcloud/sql-proxy-sa.json"
 SQL_PROXY_PORT="5432"
 SSH_KEY="$HOME/.ssh/google_compute_engine"
 TUNNEL_USER="glowbo"
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NIFI_COMPOSE="$REPO_DIR/docker-compose.yml"
+NIFI_SYNC="$REPO_DIR/nifi/sync-config.sh"
 LOG_DIR="/home/glowbo/projects/dev-logs/synthetic-data-etl-pipeline/logs"
 PID_DIR="$LOG_DIR/run"
 PIPELINE_LOG="$LOG_DIR/pipeline.log"
@@ -129,9 +130,12 @@ check_nifi() {
     record "NiFi (web $NIFI_WEB_PORT, ListenHTTP $NIFI_HTTP_PORT)" ok
     return 0
   fi
-  log "starting NiFi"
-  "$NIFI_HOME/bin/nifi.sh" start >/dev/null 2>&1
-  if wait_for_port "$NIFI_WEB_PORT" 180 && wait_for_port "$NIFI_HTTP_PORT" 120; then
+  log "starting NiFi (docker compose)"
+  if [ ! -f "$REPO_DIR/nifi/data/conf/nifi.properties" ]; then
+    bash "$NIFI_SYNC" >/dev/null 2>&1
+  fi
+  docker compose -f "$NIFI_COMPOSE" up -d --build >/dev/null 2>&1
+  if wait_for_port "$NIFI_WEB_PORT" 240 && wait_for_port "$NIFI_HTTP_PORT" 120; then
     record "NiFi (started)" ok
     return 0
   fi

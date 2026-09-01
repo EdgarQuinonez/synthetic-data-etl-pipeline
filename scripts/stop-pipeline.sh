@@ -6,11 +6,11 @@ ZONE="us-central1-a"
 SOURCE_VM="synthetic-data-gen"
 INGRESS_VM="nginx-ingress"
 SQL_INSTANCE_NAME="synthetic-postgres"
-NIFI_HOME="/opt/nifi"
 NIFI_WEB_PORT="8443"
 NIFI_HTTP_PORT="19090"
 SQL_PROXY_PORT="5432"
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NIFI_COMPOSE="$REPO_DIR/docker-compose.yml"
 LOG_DIR="/home/glowbo/projects/dev-logs/synthetic-data-etl-pipeline/logs"
 PID_DIR="$LOG_DIR/run"
 PIPELINE_LOG="$LOG_DIR/pipeline.log"
@@ -65,8 +65,8 @@ stop_nifi() {
     record "NiFi (not running)" ok
     return 0
   fi
-  log "stopping NiFi"
-  "$NIFI_HOME/bin/nifi.sh" stop >/dev/null 2>&1
+  log "stopping NiFi (docker compose)"
+  docker compose -f "$NIFI_COMPOSE" stop >/dev/null 2>&1
   if wait_port_down "$NIFI_WEB_PORT" 180 && wait_port_down "$NIFI_HTTP_PORT" 60; then
     record "NiFi (stopped)" ok
     return 0
