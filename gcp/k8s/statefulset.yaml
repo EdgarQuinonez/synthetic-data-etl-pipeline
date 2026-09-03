@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: e2e-pipeline
+  namespace: pipeline
+  labels:
+    app: e2e-pipeline
+spec:
+  serviceName: e2e-pipeline
+  replicas: 1
+  selector:
+    matchLabels:
+      app: e2e-pipeline
+  template:
+    metadata:
+      labels:
+        app: e2e-pipeline
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+        - name: seed-conf
+          image: gcr.io/data-etl-pipeline-506215/synthetic-nifi:2.11.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /repos/content_repository /repos/database_repository /repos/flowfile_repository /repos/provenance_repository /repos/state /repos/logs
+              cp -rfL /seed/secret/. /conf/
+              cp -rfL /seed/config/. /conf/
+              chown -R 1000:1000 /conf /repos
+          volumeMounts:
+            - name: nifi-conf-secret
+              mountPath: /seed/secret
+              readOnly: true
+            - name: nifi-conf
+              mountPath: /seed/config
+              readOnly: true
+            - name: conf
+              mountPath: /conf
+            - name: repos
+              mountPath: /repos
+      containers:
+        - name: nifi
+          image: gcr.io/data-etl-pipeline-506215/synthetic-nifi:2.11.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+            - name: listenhttp
+              containerPort: 19090
+              protocol: TCP
+          env:
+            - name: NIFI_WEB_HTTPS_HOST
+              value: "0.0.0.0"
+            - name: NIFI_JVM_HEAP_INIT
+              value: "1g"
+            - name: NIFI_JVM_HEAP_MAX
+              value: "1g"
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl -ksS -o /dev/null https://localhost:8443/nifi
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl -ksS -o /dev/null https://localhost:8443/nifi
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources:
+            {}
+          volumeMounts:
+            - name: conf
+              mountPath: /opt/nifi/nifi-current/conf
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/content_repository
+              subPath: content_repository
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/database_repository
+              subPath: database_repository
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/flowfile_repository
+              subPath: flowfile_repository
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/provenance_repository
+              subPath: provenance_repository
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/state
+              subPath: state
+            - name: repos
+              mountPath: /opt/nifi/nifi-current/logs
+              subPath: logs
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.25.2
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          args:
+            - data-etl-pipeline-506215:us-central1:synthetic-postgres
+            - --address=127.0.0.1
+            - --port=5432
+            - --credentials-file=/etc/sql-proxy/sa.json
+          resources:
+            {}
+          volumeMounts:
+            - name: sql-proxy-sa
+              mountPath: /etc/sql-proxy
+              readOnly: true
+      volumes:
+        - name: nifi-conf-secret
+          secret:
+            secretName: nifi-conf-secret
+        - name: nifi-conf
+          configMap:
+            name: nifi-conf
+        - name: sql-proxy-sa
+          secret:
+            secretName: sql-proxy-sa
+            items:
+              - key: sa.json
+                path: sa.json
+  volumeClaimTemplates:
+    - metadata:
+        name: conf
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi
+    - metadata:
+        name: repos
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 10Gi
