@@ -22,6 +22,15 @@ synthetic-data-gen (tail -F + curl POST)
 | `service.yaml` | ClusterIP exposing 8443 (HTTPS) + 19090 (ListenHTTP) |
 | `deploy.sh` | full orchestration: cluster, Cloud SQL, image push, config, apply, verify |
 
+## Build the image
+
+The pushed image is built from `nifi/Dockerfile` (bakes the PostgreSQL JDBC
+driver into both the legacy `/opt/nifi/lib` and `NIFI_HOME/lib` classpaths):
+
+```bash
+docker build -t synthetic-nifi:2.11.0 nifi/
+```
+
 ## Deploy
 
 ```bash
@@ -34,7 +43,8 @@ The script:
    and sets kubeconfig.
 2. Starts Cloud SQL `synthetic-postgres` if stopped.
 3. Tags + pushes `synthetic-nifi:2.11.0` to
-   `gcr.io/data-etl-pipeline-506215/synthetic-nifi:2.11.0`.
+   `gcr.io/data-etl-pipeline-506215/synthetic-nifi:2.11.0` (built from
+   `nifi/Dockerfile`).
 4. Generates ConfigMap `nifi-conf` and Secrets `nifi-conf-secret`,
    `sql-proxy-sa` from `/opt/nifi/conf` and `~/.config/gcloud/sql-proxy-sa.json`
    (sources are overridable via `NIFI_CONF` / `SQL_PROXY_SA`).
